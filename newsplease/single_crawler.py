@@ -23,7 +23,7 @@ from scrapy.utils.log import configure_logging
 from newsplease.config import CrawlerConfig
 from newsplease.config import JsonConfig
 from newsplease.helper import Helper
-from _thread import start_new_thread
+from thread import start_new_thread
 from twisted.internet.error import ReactorAlreadyRunning
 
 
@@ -97,9 +97,9 @@ class SingleCrawler(object):
             site = json_file_path
 
         if "ignore_regex" in site:
-            ignore_regex = "(%s)|" % site["ignore_regex"]
+            ignore_regex = "(%s)" % site["ignore_regex"]
         else:
-            ignore_regex = "(%s)|" % \
+            ignore_regex = "(%s)" % \
                 self.cfg.section('Crawler')['ignore_regex']
 
         # Get the default crawler. The crawler can be overwritten by fallbacks.

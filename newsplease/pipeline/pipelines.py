@@ -289,7 +289,7 @@ class ExtractedInformationStorage(object):
     def __init__(self):
         self.log = logging.getLogger(__name__)
 
-    def extract_relevant_info(item):
+    def extract_relevant_info(self,item):
         """
         extracts from an item only fields that we want to output as extracted information
         :rtype: object
@@ -328,7 +328,7 @@ class InMemoryStorage(ExtractedInformationStorage):
             url = item._values['spider_response'].meta['redirect_urls'][0]
         else:
             url = item._values['url']
-        InMemoryStorage.results[url] = ExtractedInformationStorage.extract_relevant_info(item)
+        InMemoryStorage.results[url] = self.extract_relevant_info(item)
         return item
 
     @staticmethod
@@ -362,7 +362,7 @@ class JsonFileStorage(ExtractedInformationStorage):
 
         # Write JSON to local file system
         with open(file_path, 'w') as file_:
-            json.dump(ExtractedInformationStorage.extract_relevant_info(item), file_)
+            json.dump(self.extract_relevant_info(item), file_)
 
         return item
 
@@ -445,7 +445,7 @@ class ElasticsearchStorage(ExtractedInformationStorage):
 
                 # save new version into old id of index_current
                 self.log.info("Saving to Elasticsearch: %s" % item['url'])
-                extracted_info = ExtractedInformationStorage.extract_relevant_info(item)
+                extracted_info = self.extract_relevant_info(item)
                 extracted_info['ancestor'] = ancestor
                 extracted_info['version'] = version
                 self.es.index(index=self.index_current, doc_type='article', id=ancestor,

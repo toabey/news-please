@@ -30,7 +30,8 @@ class RecursiveCrawler(scrapy.Spider):
 
         self.allowed_domains = [self.helper.url_extractor
                                 .get_allowed_domain(url)]
-        self.start_urls = [self.helper.url_extractor.get_start_url(url)]
+        #self.start_urls = [self.helper.url_extractor.get_start_url(url)]
+        self.start_urls = [self.original_url]
 
         super(RecursiveCrawler, self).__init__(*args, **kwargs)
 

@@ -98,10 +98,10 @@ class ParseCrawler(object):
         # or contain any of the given ignore_regex regexes
         return [scrapy.Request(response.urljoin(href), callback=spider.parse)
                 for href in response.css("a::attr('href')").extract()
-                if re.match(r'.*\.' + ignore_file_extensions + r'$',
-                            response.urljoin(href), re.IGNORECASE) is None and
-                len(re.match(ignore_regex,
-                             response.urljoin(href)).group(0)) == 0]
+                if ((re.match(r'.*\.' + ignore_file_extensions + r'$',
+                              href, re.IGNORECASE) is None) and
+                    ((re.match(r'^(?!.*' + ignore_regex + r').*$',
+                               href, re.IGNORECASE)) is None))]
 
     def content_type(self, response):
         """

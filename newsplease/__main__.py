@@ -17,10 +17,6 @@ from newsplease.helper_classes.savepath_parser import SavepathParser
 from newsplease.config import JsonConfig
 from newsplease.config import CrawlerConfig
 
-try:
-    import builtins
-except ImportError:
-    from future import builtins
 if sys.version_info[0] < 3:
     ConnectionError = OSError
 
@@ -361,16 +357,6 @@ Cleanup MySQL database:
     This will truncate all tables and reset the whole database.
 """)
 
-        if not confirm:
-            confirm = 'yes' in builtins.input(
-                """
-    Do you really want to do this? Write 'yes' to confirm: {yes}"""
-                    .format(yes='yes' if confirm else ''))
-
-        if not confirm:
-            print("Did not type yes. Thus aborting.")
-            return
-
         print("Resetting database...")
 
         try:
@@ -399,17 +385,6 @@ Cleanup Elasticsearch database:
     This will truncate all tables and reset the whole Elasticsearch database.
               """)
 
-        confirm = self.no_confirm
-
-        if not confirm:
-            confirm = 'yes' in builtins.input(
-                """
-Do you really want to do this? Write 'yes' to confirm: {yes}"""
-                    .format(yes='yes' if confirm else ''))
-
-        if not confirm:
-            print("Did not type yes. Thus aborting.")
-            return
 
         try:
             # initialize DB connection
@@ -446,16 +421,6 @@ Do you really want to do this? Write 'yes' to confirm: {yes}"""
 Cleanup files:
     This will delete {path} and all its contents.
 """.format(path=path))
-
-        if not confirm:
-            confirm = 'yes' in builtins.input(
-                """
-    Do you really want to do this? Write 'yes' to confirm: {yes}"""
-                    .format(yes='yes' if confirm else ''))
-
-        if not confirm:
-            print("Did not type yes. Thus aborting.")
-            return
 
         print("Removing: {}".format(path))
 
@@ -609,30 +574,9 @@ Cleanup files:
             self.graceful_stop = True
 
 
-def cli(cfg_file_path: ('path to the config file', 'option', 'c'),
-        resume: ('resume crawling from last process', 'flag'),
-        reset_elasticsearch: ('reset Elasticsearch indexes', 'flag'),
-        reset_json: ('reset JSON files', 'flag'),
-        reset_mysql: ('reset MySQL database', 'flag'),
-        reset_all: ('combines all reset options', 'flag'),
-        no_confirm: ('skip confirm dialogs', 'flag')):
-    "A generic news crawler and extractor."
-
-    if reset_all:
-        reset_elasticsearch = True
-        reset_json = True
-        reset_mysql = True
-
-    if cfg_file_path and not cfg_file_path.endswith(os.path.sep):
-        cfg_file_path += os.path.sep
-
-    NewsPleaseLauncher(cfg_file_path, resume, reset_elasticsearch, reset_json, reset_mysql, no_confirm)
-
-    pass
-
 
 def main():
-    plac.call(cli)
+    NewsPleaseLauncher(sys.argv[1:][0], False, False, False, False, True)
 
 
 if __name__ == "__main__":
